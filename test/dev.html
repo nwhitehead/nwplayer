@@ -7,34 +7,10 @@
 
 <body>
 
-<p>Below this text should be the working player.</p>
-
-<video id="nwplayer" width="800" height="600" controls="controls">
-    <source src="video/test.mp4" type="video/mp4" />
-    <source src="video/test.webm" type="video/webm" />
-</video>
-
-<div class="nwplayer-controls">
-    <a class="nwplayer-play" title="Play/Pause" />
-    <div class="nwplayer-seek" />
-    <div class="nwplayer-timer">00:00</div>
-    <div class="nwplayer-volume-box">
-        <div class="nwplayer-volume-slider" />
-        <a class="nwplayer-volume-button" title="Mute/Unmute" />
-    </div>
-</div>
-
-
-
-
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-
-<form>
-    <input id="button1" type="button" value="Play" />
-</form>
-
 <script>
 $.fn.nwVideo = function(options) {
+    console.log('Converting video player');
     // Build options data structures before iteration
     var defaults = {
         theme: 'simpledark',
@@ -43,9 +19,9 @@ $.fn.nwVideo = function(options) {
     var options = $.extend(defaults, options);
     // Iterate for each player element
     return this.each(function () {
-        var $nwVideo = $(this);
+        var $player = $(this);
         // Create highest level div
-        var $top = $('<div></div>').addClass('nwplayer-player').addClass(options.theme).addClass(options.childtheme);
+        var $topdiv = $('<div></div>').addClass('nwplayer-player').addClass(options.theme).addClass(options.childtheme);
         // Controls div
         var $controls = $('<div class="nwplayer-controls">' +
 '    <a class="nwplayer-play" title="Play/Pause" />' +
@@ -56,14 +32,50 @@ $.fn.nwVideo = function(options) {
 '        <a class="nwplayer-volume-button" title="Mute/Unmute" />' +
 '    </div>' +
 '</div>');
-        $nwVideo.wrap($top);
-        $nwVideo.after($controls);
+        $player.wrap($topdiv);
+        $player.after($controls);
+        // Remove existing fallback controls, will be replaced
+        $player.removeAttr('controls');
+
+        // Get handles to all elements
+        var $container = $player.parent('.nwplayer-player');
+        var $controls = $('.nwplayer-controls', $container);
+        var $play_button = $('.nwplayer-play', $container);
+        // Hide our controls until done
+        $controls.hide();
+        // Play/Pause function
+        var playpause_func = function() {
+            var paused = $player.attr('paused');
+//            console.log(JSON.stringify(paused));
+            paused = (paused === undefined) || (paused === true) || (paused === 'true');
+//            console.log(paused);
+            if(paused) {
+                $player.attr('paused', false);
+                $player[0].play();
+            } else {
+                $player.attr('paused', true);
+                $player[0].pause();
+            }
+        };
+        $play_button.click(playpause_func);
+        $player.click(playpause_func);
+        // Unhide our magnificent controls
+        $controls.show();
     });
 };
+</script>
 
-$("#button1").click(function() {
-    alert("click");
-    $("#nwplayer").play();
+<p>Below this text should be the working player.</p>
+
+<video id="nwplayer" width="800" height="600" controls="controls">
+    <source src="video/test.mp4" type="video/mp4" />
+    <source src="video/test.webm" type="video/webm" />
+</video>
+
+<script>
+$(document).ready(function() {
+    // Convert regular video tags into using nwplayer
+    $('video').nwVideo();
 });
 </script>
 
