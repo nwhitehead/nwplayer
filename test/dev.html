@@ -9,10 +9,36 @@
 
 <p>Below this text should be the working player.</p>
 
-<video width="800" height="600" controls="controls">
+<video id="nwplayer" width="800" height="600" controls="controls">
     <source src="video/test.mp4" type="video/mp4" />
     <source src="video/test.webm" type="video/webm" />
 </video>
+
+<div class="nwplayer-controls">
+    <a class="nwplayer-play" title="Play/Pause" />
+    <div class="nwplayer-seek" />
+    <div class="nwplayer-timer">00:00</div>
+    <div class="nwplayer-volume-box">
+        <div class="nwplayer-volume-slider" />
+        <a class="nwplayer-volume-button" title="Mute/Unmute" />
+    </div>
+</div>
+
+
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+<form>
+    <input id="button1" type="button" value="Play" />
+</form>
+
+<script>
+  $("#button1").click(function() {
+      alert("click");
+      $("#nwplayer").play();
+  });
+</script>
 
 </body>
 </html>
