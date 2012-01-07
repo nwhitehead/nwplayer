@@ -34,10 +34,37 @@
 </form>
 
 <script>
-  $("#button1").click(function() {
-      alert("click");
-      $("#nwplayer").play();
-  });
+$.fn.nwVideo = function(options) {
+    // Build options data structures before iteration
+    var defaults = {
+        theme: 'simpledark',
+        childtheme: ''
+    };
+    var options = $.extend(defaults, options);
+    // Iterate for each player element
+    return this.each(function () {
+        var $nwVideo = $(this);
+        // Create highest level div
+        var $top = $('<div></div>').addClass('nwplayer-player').addClass(options.theme).addClass(options.childtheme);
+        // Controls div
+        var $controls = $('<div class="nwplayer-controls">' +
+'    <a class="nwplayer-play" title="Play/Pause" />' +
+'    <div class="nwplayer-seek" />' +
+'    <div class="nwplayer-timer">00:00</div>' +
+'    <div class="nwplayer-volume-box">' +
+'        <div class="nwplayer-volume-slider" />' +
+'        <a class="nwplayer-volume-button" title="Mute/Unmute" />' +
+'    </div>' +
+'</div>');
+        $nwVideo.wrap($top);
+        $nwVideo.after($controls);
+    });
+};
+
+$("#button1").click(function() {
+    alert("click");
+    $("#nwplayer").play();
+});
 </script>
 
 </body>
