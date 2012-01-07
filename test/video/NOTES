@@ -1,0 +1,1 @@
+/usr/bin/ffmpeg -i test.mp4 -b 256k -acodec libvorbis -ab 64k -f webm -y test.webm
