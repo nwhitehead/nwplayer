@@ -48,11 +48,11 @@ $.fn.nwVideo = function(options) {
         var $topdiv = $('<div></div>').addClass('nwplayer-player').addClass(options.theme).addClass(options.childtheme);
         // Controls div
         var $controls = $('' +
+'<a class="nwplayer-overlay" />' +
 '<div class="nwplayer-controls">' +
 '    <a class="nwplayer-play" title="Play/Pause" />' +
 '    <div class="nwplayer-seek" />' +
 '    <div class="nwplayer-timer">0:00</div>' +
-'    <div class="nwplayer-overlay" />' +
 '    <div class="nwplayer-volume-box">' +
 '        <div class="nwplayer-volume-slider" />' +
 '        <a class="nwplayer-volume-button" title="Mute/Unmute" />' +
@@ -75,11 +75,20 @@ $.fn.nwVideo = function(options) {
 
         // Hide our controls until done
         $controls.hide();
+        // Hide overlay
+        $overlay.hide();
+        // Set overlay click action
+        if($player.attr('onclick')) {
+            $overlay.click(function() {
+                $player.attr('onclick')();
+            });
+        }
 
         // Play/Pause function
         var playpause_func = function() {
             if(is_ended($player[0])) {
                 console.log('playing');
+                $overlay.hide();
                 $player[0].play();
                 $player.attr('paused', false);
                 $play_button.addClass('nwplayer-pause');
@@ -111,6 +120,7 @@ $.fn.nwVideo = function(options) {
             console.log('Video ended');
             $player.attr('paused', true);
             $play_button.removeClass('nwplayer-pause');
+            $overlay.show();
         });
 
         // Position scrubber is a JQuery UI slider
@@ -133,9 +143,17 @@ $.fn.nwVideo = function(options) {
                         $seek.updating = true;
                     },
                     stop: function(event, ui) {
+                        var do_pause = false;
+                        if(is_ended($player[0])) {
+                            $overlay.hide();
+                            do_pause = true;
+                        }
                         console.log('Scrub to ' + ui.value);
                         $seek.updating = false;
                         $player[0].currentTime = ui.value; // ***
+                        if(do_pause) {
+                            $player[0].pause();
+                        }
                     }
                 });
             } else {
@@ -190,12 +208,7 @@ $.fn.nwVideo = function(options) {
                 $volume_button.addClass('nwplayer-mute');
             }
         };
-        var call_to_action = function() {
-            console.log('overlay toggle');
-            $overlay.toggle();
-        };
         $volume_button.click(mute_func);
-//        $volume_button.click(call_to_action);
 
         // Unhide our magnificent controls
         $controls.show();
