@@ -1,4 +1,7 @@
-//// Where did video.attr() not work, marked with ***:
+// Copyright 2012, Nathan Whitehead
+// All rights reserved
+
+//// Where $('video').attr() did not work, marked with ***:
 // 'paused'
 // 'duration'
 // 'readyState'
@@ -39,8 +42,10 @@ $.fn.nwVideo = function(options) {
         // Create highest level div
         var $topdiv = $('<div></div>').addClass('nwplayer-player').addClass(options.theme).addClass(options.childtheme);
         // Controls div
-        var $controls = $('<div class="nwplayer-controls">' +
+        var $controls = $('' +
+'<div class="nwplayer-controls">' +
 '    <a class="nwplayer-play" title="Play/Pause">play/pause</a>' +
+'    <div class="nwplayer-overlay" />' +
 '    <div class="nwplayer-seek" />' +
 '    <div class="nwplayer-timer">0:00</div>' +
 '    <div class="nwplayer-volume-box">' +
@@ -61,6 +66,7 @@ $.fn.nwVideo = function(options) {
         var $timer = $('.nwplayer-timer', $container);
         var $volume_slider = $('.nwplayer-volume-slider', $container);
         var $volume_button = $('.nwplayer-volume-button', $container);
+        var $overlay = $('.nwplayer-overlay', $container);
 
         // Hide our controls until done
         $controls.hide();
@@ -172,7 +178,12 @@ $.fn.nwVideo = function(options) {
                 $volume_button.addClass('nwplayer-mute');
             }
         };
-        $volume_button.click(mute_func);
+        var call_to_action = function() {
+            console.log('overlay toggle');
+            $overlay.toggle();
+        };
+//        $volume_button.click(mute_func);
+        $volume_button.click(call_to_action);
 
         // Unhide our magnificent controls
         $controls.show();
@@ -181,6 +192,6 @@ $.fn.nwVideo = function(options) {
 
 
 $(function() {
-    // Convert regular video tags into using nwplayer
+    // Convert all regular video tags into using nwplayer
     $('video').nwVideo();
 });
