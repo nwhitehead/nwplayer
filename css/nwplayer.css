@@ -1,28 +1,29 @@
 .nwplayer-player {
-    float: left;
-    padding: 5px;
-    border: 5px solid #886;
+    position: relative;
+    width: 800px;
+    padding: 0px;
+    border: 5px solid #007;
     -moz-border-radius: 5px;
     -ms-border-radius: 5px;
     -webkit-border-radius: 5px;
     border-radius: 5px;
-    background: #000;
-    background-image: -moz-linear-gradient(top, #332, #000);
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #332), color-stop(1, #000));
-    box-shadow: inset 0 15px 35px #553;
+    background: #001;
+    box-shadow: inset 0 15px 35px #00a;
+}
+
+.nwplayer-controls {
+    position: relative;
+    height: 55px;
 }
 
 .nwplayer-play {
+    position: absolute;
+    left: 5px;
+    top: 5px;
     width: 40px;
     height: 40px;
-    display: block;
     background: url(../gfx/play.png) no-repeat;
     opacity: 0.7;
-    -moz-transition: all 0.2s ease-in-out;
-    -ms-transition: all 0.2s ease-in-out;
-    -o-transition: all 0.2s ease-in-out;
-    -webkit-transition: all 0.2s ease-in-out;
-    transition: all 0.2s ease-in-out; 
 }
 
 .nwplayer-pause {
@@ -34,10 +35,11 @@
 }
 
 .nwplayer-seek {
-    left: 60px;
-    top: -25px;
+    position: absolute;
+    left: 65px;
+    top: 19px;
     height: 10px;
-    width: 600px;
+    width: 630px;
 }
 
 .ui-widget-content {
@@ -72,28 +74,52 @@
 }
 
 .nwplayer-timer {
-    color: #fff;
-    font-size: 8pt;
+    position: absolute;
+    left: 710px;
+    bottom: 22px;
     width: 20px;
-    left: 600px;
-    top: 10px;
+    color: #ccc;
+    font-family: mono;
+    font-size: 9pt;
 }
 
 .nwplayer-volume-box {
-    left: 600px;
-    top: 0px;
-    height: 100px;
-    width: 50px;
-    background: #f00;
+    position: absolute;
+    right: 0px;
+    bottom: 9px;
+    height: 180px;
+    width: 60px;
+}
+
+.nwplayer-volume-box:hover {
+}
+
+.nwplayer-volume-button {
+    position: absolute;
+    right: 15px;
+    bottom: 11px;
+    width: 26px;
+    height: 20px;
+    background: url(../gfx/speaker.png) no-repeat;
+    opacity: 0.7;
+}
+
+.nwplayer-volume-button:hover {
+    opacity: 1.0;
 }
 
 .nwplayer-volume-slider {
     position: absolute;
-    left: 600px;
-    top: -25px;
+    right: 25px;
+    bottom: 46px;
     height: 100px;
     width: 7px;
     border: 1px solid #222;
+    visibility: hidden;
+}
+
+.nwplayer-volume-box:hover .nwplayer-volume-slider {
+    visibility: visible;
 }
 
 .nwplayer-volume-slider .ui-slider-handle {

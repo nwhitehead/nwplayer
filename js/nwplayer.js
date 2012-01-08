@@ -55,7 +55,7 @@ $.fn.nwVideo = function(options) {
 '    <div class="nwplayer-overlay" />' +
 '    <div class="nwplayer-volume-box">' +
 '        <div class="nwplayer-volume-slider" />' +
-'        <a class="nwplayer-volume-button" title="Mute/Unmute">mute</a>' +
+'        <a class="nwplayer-volume-button" title="Mute/Unmute" />' +
 '    </div>' +
 '</div>');
         $player.wrap($topdiv);
@@ -194,8 +194,8 @@ $.fn.nwVideo = function(options) {
             console.log('overlay toggle');
             $overlay.toggle();
         };
-//        $volume_button.click(mute_func);
-        $volume_button.click(call_to_action);
+        $volume_button.click(mute_func);
+//        $volume_button.click(call_to_action);
 
         // Unhide our magnificent controls
         $controls.show();
