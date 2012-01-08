@@ -11,6 +11,11 @@
 
 //// Video helper functions
 
+var is_ended = function(video) {
+    var ended = video.ended; // ***
+    return (ended === true) || (ended === 'true');
+};
+
 var is_playing = function(video) {
     // Return true or false depending on whether video is playing
     var paused = video.paused; // ***
@@ -44,10 +49,10 @@ $.fn.nwVideo = function(options) {
         // Controls div
         var $controls = $('' +
 '<div class="nwplayer-controls">' +
-'    <a class="nwplayer-play" title="Play/Pause">play/pause</a>' +
-'    <div class="nwplayer-overlay" />' +
+'    <a class="nwplayer-play" title="Play/Pause" />' +
 '    <div class="nwplayer-seek" />' +
 '    <div class="nwplayer-timer">0:00</div>' +
+'    <div class="nwplayer-overlay" />' +
 '    <div class="nwplayer-volume-box">' +
 '        <div class="nwplayer-volume-slider" />' +
 '        <a class="nwplayer-volume-button" title="Mute/Unmute">mute</a>' +
@@ -73,6 +78,13 @@ $.fn.nwVideo = function(options) {
 
         // Play/Pause function
         var playpause_func = function() {
+            if(is_ended($player[0])) {
+                console.log('playing');
+                $player[0].play();
+                $player.attr('paused', false);
+                $play_button.addClass('nwplayer-pause');
+                return;
+            }
             if(is_playing($player[0])) {
                 console.log('pausing');
                 $player[0].pause();
