@@ -17,11 +17,17 @@
 
 <script>
 
+//// Where did video.attr() not work, marked with ***:
+// 'paused'
+// 'duration'
+// 'readyState'
+// 'currentTime'
+
 //// Video helper functions
 
 var is_playing = function(video) {
     // Return true or false depending on whether video is playing
-    var paused = video.paused;
+    var paused = video.paused; // ***
     return (paused === undefined) || (paused === false) || (paused === 'false');
 };
 
@@ -29,20 +35,6 @@ var is_ready = function(video) {
     return video.readyState > 0;
 };
 
-//// Where did video.attr() not work:
-// 'paused'
-// 'duration'
-// 'readyState'
-// 'currentTime'
-
-var get_duration = function(video) {
-    return video.duration;
-};
-
-var set_position = function(video, pos) {
-    video.currentTime = pos;
-};
-    
 $.fn.nwVideo = function(options) {
     console.log('Converting video player');
     // Build options data structures before iteration
@@ -81,11 +73,13 @@ $.fn.nwVideo = function(options) {
         // Play/Pause function
         var playpause_func = function() {
             if(is_playing($player[0])) {
-                $player.attr('paused', true);
+                console.log('pausing');
                 $player[0].pause();
+                $player.attr('paused', true);
             } else {
-                $player.attr('paused', false);
+                console.log('playing');
                 $player[0].play();
+                $player.attr('paused', false);
             }
         };
         // Bind play/pause to button
@@ -93,12 +87,15 @@ $.fn.nwVideo = function(options) {
         // Also bind to clicking on video
         $player.click(playpause_func);
         $player.bind('play', function() {
+            $player.attr('paused', false);
             $play_button.addClass('nwplayer-pause');
         });
         $player.bind('pause', function() {
+            $player.attr('paused', true);
             $play_button.removeClass('nwplayer-pause');
         });
         $player.bind('ended', function() {
+            $player.attr('paused', true);
             $play_button.removeClass('nwplayer-pause');
         });
         // Position scrubber is a JQuery UI slider
@@ -106,7 +103,7 @@ $.fn.nwVideo = function(options) {
             console.log('trying createScrubber()');
             // Wait until player is ready to create scrubber
             if(is_ready($player[0])) {
-                var duration = get_duration($player[0]);
+                var duration = $player[0].duration; // ***
                 console.log('Video duration is: ' + duration + 's');
                 // Call jQuery UI to make the slider
                 $seek.slider({
@@ -122,7 +119,7 @@ $.fn.nwVideo = function(options) {
                     stop: function(event, ui) {
                         console.log('Scrub to ' + ui.value);
                         seeksliding = false;
-                        $player[0].currentTime = ui.value;
+                        $player[0].currentTime = ui.value; // ***
                     }
                 });
             } else {
