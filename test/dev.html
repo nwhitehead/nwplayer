@@ -7,7 +7,14 @@
 
 <body>
 
+<!--
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+-->
+
+<link type="text/css" href="jquery-ui-1.8.16.custom.css" rel="Stylesheet" />
+<script src="jquery-1.7.1.min.js"></script>
+<script src="jquery-ui-1.8.16.custom.min.js"></script>
+
 <script>
 $.fn.nwVideo = function(options) {
     console.log('Converting video player');
@@ -57,13 +64,35 @@ $.fn.nwVideo = function(options) {
                 $player[0].pause();
             }
         };
+        // Bind play/pause to button
         $play_button.click(playpause_func);
+        // Also bind to clicking on video
         $player.click(playpause_func);
+        $player.bind('play', function() {
+            $play_button.addClass('nwplayer-pause');
+        });
+        $player.bind('pause', function() {
+            $play_button.removeClass('nwplayer-pause');
+        });
+        $player.bind('ended', function() {
+            $play_button.removeClass('nwplayer-pause');
+        });
         // Unhide our magnificent controls
         $controls.show();
     });
 };
 </script>
+
+<style>
+div.demo { 
+    background-color: #fffff0;
+    padding: 10px !important;
+}
+</style>
+
+<div class="demo">
+<div id="testslider"></div>
+</div>
 
 <p>Below this text should be the working player.</p>
 
@@ -73,7 +102,9 @@ $.fn.nwVideo = function(options) {
 </video>
 
 <script>
-$(document).ready(function() {
+$(function() {
+    // Test the slider
+    $('#testslider').slider();
     // Convert regular video tags into using nwplayer
     $('video').nwVideo();
 });
