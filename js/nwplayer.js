@@ -78,20 +78,23 @@ $.fn.nwVideo = function(options) {
         // Hide overlay
         $overlay.hide();
         // Set overlay click action
-        if($player.attr('onclick')) {
-            $overlay.click(function() {
-                $player.attr('onclick')();
+        if(options.action) {
+            $overlay.click(function(event) {
+                options.action(event, $player);
             });
         }
 
         // Play/Pause function
         var playpause_func = function() {
             if(is_ended($player[0])) {
-                console.log('playing');
-                $overlay.hide();
-                $player[0].play();
-                $player.attr('paused', false);
-                $play_button.addClass('nwplayer-pause');
+                if(options.restart_on_end) {
+                    console.log('playing');
+                    $overlay.hide();
+                    $player[0].play();
+                    $player.attr('paused', false);
+                    $play_button.addClass('nwplayer-pause');
+                    return;
+                }
                 return;
             }
             if(is_playing($player[0])) {
@@ -218,5 +221,10 @@ $.fn.nwVideo = function(options) {
 
 $(function() {
     // Convert all regular video tags into using nwplayer
-    $('video').nwVideo();
+    $('video').nwVideo({
+        action: function(evt, player) {
+            alert('click');
+        },
+        restart_on_end: true
+    });
 });
