@@ -178,3 +178,9 @@ $.fn.nwVideo = function(options) {
         $controls.show();
     });
 };
+
+
+$(function() {
+    // Convert regular video tags into using nwplayer
+    $('video').nwVideo();
+});
