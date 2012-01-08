@@ -39,6 +39,9 @@ var min_two_digits = function(x) {
     return (x < 10) ? '0' + x : x;
 };
 
+// Structure of code based on tutorial at:
+// http://dev.opera.com/articles/view/custom-html5-video-player-with-css3-and-jquery/
+
 $.fn.nwVideo = function(options) {
     console.log('Converting video player');
     // Build options data structures before iteration
@@ -54,12 +57,12 @@ $.fn.nwVideo = function(options) {
         var $topdiv = $('<div></div>').addClass('nwplayer-player').addClass(options.theme).addClass(options.childtheme);
         // Controls div
         var $controls = $('<div class="nwplayer-controls">' +
-'    <a class="nwplayer-play" title="Play/Pause" />' +
+'    <a class="nwplayer-play" title="Play/Pause">play/pause</a>' +
 '    <div class="nwplayer-seek" />' +
 '    <div class="nwplayer-timer">0:00</div>' +
 '    <div class="nwplayer-volume-box">' +
 '        <div class="nwplayer-volume-slider" />' +
-'        <a class="nwplayer-volume-button" title="Mute/Unmute" />' +
+'        <a class="nwplayer-volume-button" title="Mute/Unmute">mute</a>' +
 '    </div>' +
 '</div>');
         $player.wrap($topdiv);
@@ -73,8 +76,12 @@ $.fn.nwVideo = function(options) {
         var $play_button = $('.nwplayer-play', $container);
         var $seek = $('.nwplayer-seek', $container);
         var $timer = $('.nwplayer-timer', $container);
+        var $volume_slider = $('.nwplayer-volume-slider', $container);
+        var $volume_button = $('.nwplayer-volume-button', $container);
+
         // Hide our controls until done
         $controls.hide();
+
         // Play/Pause function
         var playpause_func = function() {
             if(is_playing($player[0])) {
@@ -100,9 +107,11 @@ $.fn.nwVideo = function(options) {
             $play_button.removeClass('nwplayer-pause');
         });
         $player.bind('ended', function() {
+            console.log('Video ended');
             $player.attr('paused', true);
             $play_button.removeClass('nwplayer-pause');
         });
+
         // Position scrubber is a JQuery UI slider
         $seek.updating = false;
         var createScrubber = function() {
@@ -134,33 +143,59 @@ $.fn.nwVideo = function(options) {
             }
         };
         createScrubber();
+
+        // Now hook timer up
         var time_format = function(sec) {
             var m = Math.floor(sec / 60);
             var s = Math.floor(sec - 60 * m);
             return m + ':' + min_two_digits(s);
         };
-        var scrubTime = function() {
+        var tick = function() {
             var time = $player[0].currentTime; // ***
-            if(!$seek.updating) $seek.slider('value', time);
+            // Avoid updating slider when already moving due
+            // to user click
+            if(!$seek.updating) {
+                $seek.slider('value', time);
+            }
+            // Show timer text
             $timer.text(time_format(time));
         };
-        $player.bind('timeupdate', scrubTime);
+        $player.bind('timeupdate', tick);
+
+        // Volume control is a jQuery UI slider as well
+        $volume_slider.slider({
+            value: 1,
+            orientation: 'vertical',
+            range: 'min',
+            max: 1,
+            step: 0.05,
+            animate: false,
+            slide: function(event, ui) {
+                console.log('Set volume to ' + ui.value);
+                $player[0].muted = false; // ***
+                $player[0].volume = ui.value; // ***
+            }
+        });
+        var mute_func = function() {
+            if($player[0].muted == true) { // ***
+                console.log('unmute');
+                $player[0].muted = false; // ***
+                $volume_slider.slider('value', $player[0].volume); // ***
+                $volume_button.removeClass('nwplayer-mute');
+            } else {
+                console.log('mute');
+                $player[0].muted = true; // ***
+                $volume_slider.slider('value', 0);
+                $volume_button.addClass('nwplayer-mute');
+            }
+        };
+        $volume_button.click(mute_func);
+
         // Unhide our magnificent controls
         $controls.show();
     });
 };
 </script>
-
-<style>
-div.demo { 
-    background-color: #fffff0;
-    padding: 10px !important;
-}
-</style>
-
-<div class="demo">
-<div id="testslider"></div>
-</div>
 
 <p>Below this text should be the working player.</p>
 
@@ -171,8 +206,6 @@ div.demo {
 
 <script>
 $(function() {
-    // Test the slider
-    $('#testslider').slider();
     // Convert regular video tags into using nwplayer
     $('video').nwVideo();
 });
