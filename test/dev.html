@@ -35,6 +35,10 @@ var is_ready = function(video) {
     return video.readyState > 0;
 };
 
+var min_two_digits = function(x) {
+    return (x < 10) ? '0' + x : x;
+};
+
 $.fn.nwVideo = function(options) {
     console.log('Converting video player');
     // Build options data structures before iteration
@@ -52,7 +56,7 @@ $.fn.nwVideo = function(options) {
         var $controls = $('<div class="nwplayer-controls">' +
 '    <a class="nwplayer-play" title="Play/Pause" />' +
 '    <div class="nwplayer-seek" />' +
-'    <div class="nwplayer-timer">00:00</div>' +
+'    <div class="nwplayer-timer">0:00</div>' +
 '    <div class="nwplayer-volume-box">' +
 '        <div class="nwplayer-volume-slider" />' +
 '        <a class="nwplayer-volume-button" title="Mute/Unmute" />' +
@@ -68,6 +72,7 @@ $.fn.nwVideo = function(options) {
         var $controls = $('.nwplayer-controls', $container);
         var $play_button = $('.nwplayer-play', $container);
         var $seek = $('.nwplayer-seek', $container);
+        var $timer = $('.nwplayer-timer', $container);
         // Hide our controls until done
         $controls.hide();
         // Play/Pause function
@@ -99,6 +104,7 @@ $.fn.nwVideo = function(options) {
             $play_button.removeClass('nwplayer-pause');
         });
         // Position scrubber is a JQuery UI slider
+        $seek.updating = false;
         var createScrubber = function() {
             console.log('trying createScrubber()');
             // Wait until player is ready to create scrubber
@@ -114,11 +120,11 @@ $.fn.nwVideo = function(options) {
                     max: duration,
                     animate: false,
                     slide: function(event, ui) {
-                        seeksliding = true;
+                        $seek.updating = true;
                     },
                     stop: function(event, ui) {
                         console.log('Scrub to ' + ui.value);
-                        seeksliding = false;
+                        $seek.updating = false;
                         $player[0].currentTime = ui.value; // ***
                     }
                 });
@@ -128,6 +134,17 @@ $.fn.nwVideo = function(options) {
             }
         };
         createScrubber();
+        var time_format = function(sec) {
+            var m = Math.floor(sec / 60);
+            var s = Math.floor(sec - 60 * m);
+            return m + ':' + min_two_digits(s);
+        };
+        var scrubTime = function() {
+            var time = $player[0].currentTime; // ***
+            if(!$seek.updating) $seek.slider('value', time);
+            $timer.text(time_format(time));
+        };
+        $player.bind('timeupdate', scrubTime);
         // Unhide our magnificent controls
         $controls.show();
     });
