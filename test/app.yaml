@@ -1,0 +1,14 @@
+application: nathansandbox
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /test
+  static_dir: test
+- url: /gfx
+  static_dir: gfx
+- url: /css
+  static_dir: css
+- url: /js
+  static_dir: js

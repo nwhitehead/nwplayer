@@ -217,14 +217,3 @@ $.fn.nwVideo = function(options) {
         $controls.show();
     });
 };
-
-
-$(function() {
-    // Convert all regular video tags into using nwplayer
-    $('video').nwVideo({
-        action: function(evt, player) {
-            alert('click');
-        },
-        restart_on_end: true
-    });
-});

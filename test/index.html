@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Nathan's HTML5 Video Player</title>
+</head>
+
+<body>
+
+<link type="text/css" href="../css/jquery-ui-1.8.16.custom.css" rel="Stylesheet" />
+<script src="../js/jquery-1.7.1.min.js"></script>
+<script src="../js/jquery-ui-1.8.16.custom.min.js"></script>
+<link type="text/css" href="../css/nwplayer.css" rel="Stylesheet" />
+<script src="../js/nwplayer.js"></script>
+
+<p>Below this text should be the working player.</p>
+
+<video id="nwplayer1" width="800" controls="controls">
+    <source src="video/test.mp4" type="video/mp4" />
+    <source src="video/test.webm" type="video/webm" />
+</video>
+
+<p>Here is standard video player.</p>
+
+<video id="nwplayer2" width="800" controls="controls">
+    <source src="video/test.mp4" type="video/mp4" />
+    <source src="video/test.webm" type="video/webm" />
+</video>
+
+<script>
+$(function() {
+    // Convert all regular video tags into using nwplayer
+    $('#nwplayer1').nwVideo({
+        action: function(evt, player) {
+            alert('click');
+        },
+        restart_on_end: true
+    });
+});
+</script>
+
+</body>
+</html>
