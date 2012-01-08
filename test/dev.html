@@ -16,6 +16,19 @@
 <script src="jquery-ui-1.8.16.custom.min.js"></script>
 
 <script>
+
+//// Video helper functions
+
+var is_playing = function(video) {
+    // Return true or false depending on whether video is playing
+    var paused = video.paused;
+    return (paused === undefined) || (paused === false) || (paused === 'false');
+};
+
+var is_ready = function(video) {
+    return video.readyState > 0;
+};
+    
 $.fn.nwVideo = function(options) {
     console.log('Converting video player');
     // Build options data structures before iteration
@@ -48,20 +61,17 @@ $.fn.nwVideo = function(options) {
         var $container = $player.parent('.nwplayer-player');
         var $controls = $('.nwplayer-controls', $container);
         var $play_button = $('.nwplayer-play', $container);
+        var $seek = $('.nwplayer-seek', $container);
         // Hide our controls until done
         $controls.hide();
         // Play/Pause function
         var playpause_func = function() {
-            var paused = $player.attr('paused');
-//            console.log(JSON.stringify(paused));
-            paused = (paused === undefined) || (paused === true) || (paused === 'true');
-//            console.log(paused);
-            if(paused) {
-                $player.attr('paused', false);
-                $player[0].play();
-            } else {
+            if(is_playing($player[0])) {
                 $player.attr('paused', true);
                 $player[0].pause();
+            } else {
+                $player.attr('paused', false);
+                $player[0].play();
             }
         };
         // Bind play/pause to button
@@ -77,6 +87,34 @@ $.fn.nwVideo = function(options) {
         $player.bind('ended', function() {
             $play_button.removeClass('nwplayer-pause');
         });
+        // Position scrubber is a JQuery UI slider
+        var createScrubber = function() {
+            console.log('trying createScrubber()');
+            // Wait until player is ready to create scrubber
+            if(is_ready($player[0])) {
+                var duration = $player.attr('duration');
+                // Call jQuery UI to make the slider
+                $seek.slider({
+                    value: 0,
+                    step: 0.01,
+                    orientation: 'horizontal',
+                    range: 'min',
+                    max: duration,
+                    animate: true,
+                    slide: function() {
+                        seeksliding = true;
+                    },
+                    stop: function() {
+                        seeksliding = false;
+                        $player.attr('currentTime', ui.value);
+                    }
+                });
+            } else {
+                // If not ready, try again in 150ms
+                setTimeout(createScrubber, 150);
+            }
+        };
+        createScrubber();
         // Unhide our magnificent controls
         $controls.show();
     });
