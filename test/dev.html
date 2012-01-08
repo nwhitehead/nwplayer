@@ -28,6 +28,20 @@ var is_playing = function(video) {
 var is_ready = function(video) {
     return video.readyState > 0;
 };
+
+//// Where did video.attr() not work:
+// 'paused'
+// 'duration'
+// 'readyState'
+// 'currentTime'
+
+var get_duration = function(video) {
+    return video.duration;
+};
+
+var set_position = function(video, pos) {
+    video.currentTime = pos;
+};
     
 $.fn.nwVideo = function(options) {
     console.log('Converting video player');
@@ -92,7 +106,8 @@ $.fn.nwVideo = function(options) {
             console.log('trying createScrubber()');
             // Wait until player is ready to create scrubber
             if(is_ready($player[0])) {
-                var duration = $player.attr('duration');
+                var duration = get_duration($player[0]);
+                console.log('Video duration is: ' + duration + 's');
                 // Call jQuery UI to make the slider
                 $seek.slider({
                     value: 0,
@@ -100,13 +115,14 @@ $.fn.nwVideo = function(options) {
                     orientation: 'horizontal',
                     range: 'min',
                     max: duration,
-                    animate: true,
-                    slide: function() {
+                    animate: false,
+                    slide: function(event, ui) {
                         seeksliding = true;
                     },
-                    stop: function() {
+                    stop: function(event, ui) {
+                        console.log('Scrub to ' + ui.value);
                         seeksliding = false;
-                        $player.attr('currentTime', ui.value);
+                        $player[0].currentTime = ui.value;
                     }
                 });
             } else {
