@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:s="library://ns.adobe.com/flex/spark" creationComplete="init()">
+
+    <mx:VideoDisplay id="vd" height="360" width="640" autoPlay="false" />
+
+    <mx:Script>
+<![CDATA[
+private function getParam(obj:Object, key:String, def:String):String {
+    if (key in obj) {
+        return obj[key];
+    } else {
+        return def;
+    }
+}
+
+private function parseBoolean(x:String):Boolean {
+    return (x === 'true' || x === 'True');
+}
+
+private function init():void {
+    var obj:Object = Application.application.parameters;
+    vd.width = parseInt(getParam(obj, "width", "640"));
+    vd.height = parseInt(getParam(obj, "height", "360"));
+    vd.source = getParam(obj, "source", "");;
+    debugLabel.text = vd.source;
+    if (parseBoolean(getParam(obj, "autoPlay", "false"))) {
+        vd.play();
+    }
+}
+]]>
+    </mx:Script>
+
+    <mx:Label id="debugLabel" text="hell" />
+
+</mx:Application>
